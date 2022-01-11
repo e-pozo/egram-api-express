@@ -1,0 +1,23 @@
+{
+  "name": "egram-express-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "babel src/index.js -d dist",
+    "start": "npm run build && nodemon dist/index.js"
+  },
+  "author": "Eduardo Pozo <eduardo.pozo.14@sansano.usm.cl>",
+  "license": "MIT",
+  "dependencies": {
+    "@hapi/boom": "^9.1.4",
+    "express": "^4.17.2"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.16.8",
+    "@babel/core": "^7.16.7",
+    "@babel/preset-env": "^7.16.8",
+    "nodemon": "^2.0.15"
+  }
+}
