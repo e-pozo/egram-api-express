@@ -5,19 +5,31 @@
   "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "babel src/index.js -d dist",
-    "start": "npm run build && nodemon dist/index.js"
+    "build": "babel -d ./dist ./src -s",
+    "start": "npm run build && node ./dist/index.js",
+    "start:dev": "nodemon --exec babel-node ./src/index.js"
   },
   "author": "Eduardo Pozo <eduardo.pozo.14@sansano.usm.cl>",
   "license": "MIT",
   "dependencies": {
+    "@babel/runtime": "^7.16.7",
     "@hapi/boom": "^9.1.4",
-    "express": "^4.17.2"
+    "bcrypt": "^5.0.1",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.2",
+    "sequelize": "^6.13.0",
+    "sequelize-cli": "^6.3.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.16.8",
     "@babel/core": "^7.16.7",
+    "@babel/node": "^7.16.8",
+    "@babel/plugin-transform-runtime": "^7.16.8",
     "@babel/preset-env": "^7.16.8",
+    "eslint": "^8.6.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
     "nodemon": "^2.0.15"
   }
 }
