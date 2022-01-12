@@ -1,2 +1,6 @@
 dist
 node_modules
+.env
+postgres_data
+src/uploads/*
+!src/uploads/.gitkeep

@@ -1,4 +1,4 @@
-import boom from '@hapi/boom';
+import { ValidationError } from 'sequelize';
 
 export function logErrors(err, req, res, next) {
   console.log(err);
@@ -24,7 +24,7 @@ export function ormErrorHandler(err, req, res, next) {
   next(err);
 }
 
-export function sendServerErrorHandler() {
+export function sendServerErrorHandler(err, _req, res, _next) {
   res.status(500).json({
     error: err.message,
     stack: err.stack,
