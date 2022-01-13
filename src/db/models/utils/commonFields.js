@@ -38,4 +38,4 @@ function CommonFields() {
   };
 }
 
-module.exports = { commonFields: new CommonFields() };
+module.exports = new CommonFields();

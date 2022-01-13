@@ -1,5 +1,6 @@
 const { Model, DataTypes } = require('sequelize');
-const { commonFields } = require('./utils/commonFields');
+const { USER_TABLE } = require('./user.model');
+const commonFields = require('./utils/commonFields');
 const MEDIA_CONTENT_TABLE = 'media_contents';
 const mediaContentSchema = {
   id: commonFields.id,
@@ -35,10 +36,13 @@ const mediaContentSchema = {
     type: DataTypes.DATE,
     field: 'disclosure_date',
   },
+  creatorId: commonFields.foreign('creator_id', USER_TABLE, 'id'),
 };
 
 class MediaContent extends Model {
-  static associate() {}
+  static associate(models) {
+    this.belongsTo(models.User, { as: 'creator' });
+  }
 
   static config(sequelize) {
     return {
