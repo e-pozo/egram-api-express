@@ -1,5 +1,6 @@
 const { Model, DataTypes } = require('sequelize');
 const commonFields = require('./utils/commonFields');
+const { hash } = require('../../auth/hash');
 const USER_TABLE = 'users';
 const userSchema = {
   id: commonFields.id,
@@ -49,7 +50,12 @@ class User extends Model {
       foreignKey: 'creatorId',
     });
   }
-
+  static hookConf() {
+    this.beforeCreate('hashPassword', async (user, _options) => {
+      const hashedPassword = await hash(user.password);
+      user.password = hashedPassword;
+    });
+  }
   static config(sequelize) {
     return {
       sequelize,

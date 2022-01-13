@@ -11,7 +11,11 @@
     "migration:generate": "sequelize-cli migration:generate --name",
     "migration:run": "sequelize-cli db:migrate",
     "migration:undo": "sequelize-cli db:migrate:undo",
-    "migration:DELETE_ALL": "sequelize-cli db:migrate:undo:all"
+    "migration:DELETE_ALL": "sequelize-cli db:migrate:undo:all",
+    "seed:generate": "sequelize-cli seed:generate --name",
+    "seed:run": "sequelize-cli db:seed:all",
+    "seed:undo": "sequelize-cli db:seed:undo",
+    "seed:DELETE_ALL": "sequelize-cli db:seed:undo:all"
   },
   "author": "Eduardo Pozo <eduardo.pozo.14@sansano.usm.cl>",
   "license": "MIT",
