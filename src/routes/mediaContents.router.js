@@ -1,32 +1,21 @@
 import { Router } from 'express';
 import { MediaContentService } from '../services/mediaContent.service';
 import { upload } from '../libs/multer';
-import { uploadFile, getFileStream } from '../libs/s3';
+import { getFileStream } from '../libs/s3';
 import fs from 'fs';
 import util from 'util';
+import { validatorHandler } from '../middlewares/validator.handler';
+import { dataFilterToCU } from '../schemas/mediaContent.schema';
 const unlinkFile = util.promisify(fs.unlink);
 const mediaContentService = new MediaContentService();
 const router = Router();
 router.post(
   '/',
+  validatorHandler(dataFilterToCU),
   upload.single('content'),
   async ({ file, body }, res, next) => {
     try {
-      const result = await uploadFile(file);
-      console.log(result);
-      const fileName = file.filename;
-      const data = {
-        title: body.title || null,
-        description: body.description || null,
-        mediaURL: fileName,
-        likes: 0,
-        visits: 0,
-        sharedCounter: 0,
-        disclosureDate: body.disclosureDate || null,
-        accessStatus: body.accessStatus || 'private',
-      };
-      const mediaContent = mediaContentService.create(data);
-      await unlinkFile(file.path);
+      const mediaContent = await mediaContentService.create(body, file);
       res.json(mediaContent);
     } catch (err) {
       next(err);

@@ -9,11 +9,11 @@ const mediaContentSchema = {
   description: {
     type: DataTypes.TEXT,
   },
-  mediaURL: {
-    type: DataTypes.STRING,
+  mediaKey: {
+    type: DataTypes.UUID,
     allowNull: false,
     unique: true,
-    field: 'media_url',
+    field: 'media_key',
   },
   likes: {
     type: DataTypes.INTEGER.UNSIGNED,
@@ -26,6 +26,11 @@ const mediaContentSchema = {
   },
   createdAt: commonFields.createdAt,
   updatedAt: commonFields.updatedAt,
+  accessStatus: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    field: 'access_status',
+  },
   disclosureDate: {
     type: DataTypes.DATE,
     field: 'disclosure_date',
@@ -41,6 +46,7 @@ class MediaContent extends Model {
       tableName: MEDIA_CONTENT_TABLE,
       modelName: 'MediaContent',
       timestamps: true,
+      indexes: [{ unique: true, fields: ['media_key'] }],
     };
   }
 }

@@ -8,7 +8,7 @@ const s3 = new S3({
 });
 
 //uploads a file to s3
-export function uploadFile(file) {
+export function uploadFileS3(file) {
   const fileStream = fs.createReadStream(file.path);
   const uploadParams = {
     Bucket: awsBucket,
@@ -18,10 +18,18 @@ export function uploadFile(file) {
   return s3.upload(uploadParams).promise();
 }
 //downloads a file from s3
-export function getFileStream(fileKey) {
+export function getFileStreamS3(fileKey) {
   const downloadParams = {
     Key: fileKey,
     Bucket: awsBucket,
   };
   return s3.getObject(downloadParams).createReadStream();
+}
+
+export function deleteFileS3(fileKey) {
+  const deleteParams = {
+    Bucket: awsBucket,
+    Key: fileKey,
+  };
+  return s3.deleteObject(deleteParams).promise();
 }
