@@ -33,19 +33,19 @@ const userSchema = {
 
 class User extends Model {
   static associate(models) {
-    User.belongsToMany(models.User, {
+    this.belongsToMany(models.User, {
       as: 'friends',
       through: models.Friendship,
       foreignKey: 'userId',
       otherKey: 'friendId',
     });
-    User.belongsToMany(models.Role, {
+    this.belongsToMany(models.Role, {
       as: 'roles',
       through: models.Permission,
       foreignKey: 'userId',
       otherKey: 'roleId',
     });
-    User.hasMany(models.MediaContent, {
+    this.hasMany(models.MediaContent, {
       as: 'contentCreations',
       foreignKey: 'creatorId',
     });

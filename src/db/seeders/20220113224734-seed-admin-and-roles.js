@@ -19,11 +19,14 @@ module.exports = {
       ],
       { returning: true }
     );
-    const [role] = await queryInterface.bulkInsert(
+    const [adminRole] = await queryInterface.bulkInsert(
       ROLE_TABLE,
       [
         {
           role: 'ADMIN',
+        },
+        {
+          role: 'USER',
         },
       ],
       { returning: true }
@@ -31,7 +34,7 @@ module.exports = {
     await queryInterface.bulkInsert(PERMISSION_TABLE, [
       {
         user_id: user.id,
-        role_id: role.id,
+        role_id: adminRole.id,
         created_at: '1999-01-08 04:05:06',
         updated_at: '1999-01-08 04:05:06',
       },

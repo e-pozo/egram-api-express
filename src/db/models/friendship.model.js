@@ -27,7 +27,7 @@ class Friendship extends Model {
     return {
       sequelize,
       tableName: FRIENDSHIP_TABLE,
-      modelName: 'FriendShip',
+      modelName: 'Friendship',
       timestamps: true,
     };
   }
