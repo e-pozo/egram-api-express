@@ -1,13 +1,9 @@
 import { Router } from 'express';
-import { MediaContentService } from '../services/mediaContent.service';
+import { mediaContentService } from '../services/mediaContent.service';
 import { upload } from '../libs/multer';
 import { getFileStream } from '../libs/s3';
-import fs from 'fs';
-import util from 'util';
 import { validatorHandler } from '../middlewares/validator.handler';
 import { dataFilterToCU } from '../schemas/mediaContent.schema';
-const unlinkFile = util.promisify(fs.unlink);
-const mediaContentService = new MediaContentService();
 const router = Router();
 router.post(
   '/',
@@ -22,6 +18,15 @@ router.post(
     }
   }
 );
+
+router.get('/', async ({ user: { sub } }, res, next) => {
+  try {
+    const mediaContents = await mediaContentService.userMediaContents(sub);
+    res.json(mediaContents);
+  } catch (err) {
+    next(err);
+  }
+});
 router.get('/resource/:key', (req, res) => {
   console.log(req.params);
   const key = req.params.key;
