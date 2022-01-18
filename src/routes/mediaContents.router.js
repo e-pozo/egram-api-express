@@ -1,5 +1,8 @@
 import { Router } from 'express';
-import { mediaContentService } from '../services/mediaContent.service';
+import {
+  mediaContentService,
+  checkMediaContentAuthorization,
+} from '../services/mediaContent.service';
 import { upload } from '../libs/multer';
 import { getFileStream } from '../libs/s3';
 import { validatorHandler } from '../middlewares/validator.handler';
@@ -19,7 +22,7 @@ router.post(
   }
 );
 
-router.get('/', async ({ user: { sub } }, res, next) => {
+router.get('/created', async ({ user: { sub } }, res, next) => {
   try {
     const mediaContents = await mediaContentService.userMediaContents(sub);
     res.json(mediaContents);
@@ -27,6 +30,21 @@ router.get('/', async ({ user: { sub } }, res, next) => {
     next(err);
   }
 });
+
+router.get(
+  '/:id',
+  checkMediaContentAuthorization,
+  async ({ user, params: { id } }, res, next) => {
+    console.log(user);
+    try {
+      const mediaContent = await mediaContentService.findOne(id);
+      res.json(mediaContent);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
 router.get('/resource/:key', (req, res) => {
   console.log(req.params);
   const key = req.params.key;

@@ -5,9 +5,11 @@ import util from 'util';
 import fs from 'fs';
 import { userService } from './user.service';
 import { DEFAULT_PAG_LIMIT, DEFAULT_PAG_OFFSET } from './utils/constants';
+import { CRUDServiceClosure } from './utils/CRUDServiceClosure';
 const unlinkFile = util.promisify(fs.unlink);
 const MediaContent = sequelize.models.MediaContent;
-class MediaContentService {
+const CRUDService = CRUDServiceClosure(MediaContent);
+class MediaContentService extends CRUDService {
   async create(userId, data, file) {
     try {
       const user = await userService.findOne(userId);
@@ -61,18 +63,25 @@ class MediaContentService {
 export const mediaContentService = new MediaContentService();
 
 //AUTHORIZATION MIDDLEWARE
-export async function onlyCreators(
+export async function checkMediaContentAuthorization(
   { params: { id }, user: { sub } },
   _res,
   next
 ) {
-  //TODO
-}
-
-export async function checkPublicAccess(
-  { params: { id }, user: { sub } },
-  _res,
-  next
-) {
-  //TODO
+  const [user, mediaContent] = await Promise.all([
+    userService.findOne(sub),
+    mediaContentService.findOne(id),
+  ]);
+  if (await user.hasContentCreation(mediaContent)) return next();
+  if (mediaContent.statusAccess == 'FRIENDS') {
+    const creator = await mediaContent.getCreator();
+    if (
+      await creator.hasFriend(user, {
+        through: { where: { status: 'ACCEPTED' } },
+      })
+    )
+      return next();
+  }
+  if (mediaContent.statusAccess == 'PUBLIC') return next();
+  next(boom.forbidden('resource forbbiden'));
 }
