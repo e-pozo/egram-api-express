@@ -68,29 +68,50 @@ export async function checkMediaContentAuthorization(
   _res,
   next
 ) {
-  let responses;
-  if (!id) {
-    responses = await Promise.all([
-      userService.findOne(sub),
-      mediaContentService.findByKey(key),
-    ]);
-  } else {
-    responses = await Promise.all([
+  try {
+    let responses;
+    if (!id) {
+      responses = await Promise.all([
+        userService.findOne(sub),
+        mediaContentService.findByKey(key),
+      ]);
+    } else {
+      responses = await Promise.all([
+        userService.findOne(sub),
+        mediaContentService.findOne(id),
+      ]);
+    }
+    const [user, mediaContent] = responses;
+    if (await user.hasContentCreation(mediaContent)) return next();
+    if (mediaContent.statusAccess == 'FRIENDS') {
+      const creator = await mediaContent.getCreator();
+      if (
+        await creator.hasFriend(user, {
+          through: { where: { status: 'ACCEPTED' } },
+        })
+      )
+        return next();
+    }
+    if (mediaContent.statusAccess == 'PUBLIC') return next();
+    next(boom.forbidden('resource forbbiden'));
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function checkOnlyCreator(
+  { params: { id }, user: { sub } },
+  _res,
+  next
+) {
+  try {
+    const [user, mediaContent] = await Promise.all([
       userService.findOne(sub),
       mediaContentService.findOne(id),
     ]);
+    if (await user.hasContentCreation(mediaContent)) return next();
+    next(boom.forbidden('resource forbbiden'));
+  } catch (err) {
+    next(err);
   }
-  const [user, mediaContent] = responses;
-  if (await user.hasContentCreation(mediaContent)) return next();
-  if (mediaContent.statusAccess == 'FRIENDS') {
-    const creator = await mediaContent.getCreator();
-    if (
-      await creator.hasFriend(user, {
-        through: { where: { status: 'ACCEPTED' } },
-      })
-    )
-      return next();
-  }
-  if (mediaContent.statusAccess == 'PUBLIC') return next();
-  next(boom.forbidden('resource forbbiden'));
 }

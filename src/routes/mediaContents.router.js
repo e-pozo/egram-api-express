@@ -2,6 +2,7 @@ import { Router } from 'express';
 import {
   mediaContentService,
   checkMediaContentAuthorization,
+  checkOnlyCreator,
 } from '../services/mediaContent.service';
 import { upload } from '../libs/multer';
 import { getFileStreamS3 } from '../libs/s3';
@@ -15,13 +16,25 @@ router.post(
   async ({ file, body, user: { sub } }, res, next) => {
     try {
       const mediaContent = await mediaContentService.create(sub, body, file);
-      res.json(mediaContent);
+      res.status(201).json(mediaContent);
     } catch (err) {
       next(err);
     }
   }
 );
 
+router.patch(
+  '/:id',
+  checkOnlyCreator,
+  async ({ params: { id }, body }, res, next) => {
+    try {
+      const mediaContent = await mediaContentService.update(id, body);
+      res.json(mediaContent);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 router.get('/created', async ({ user: { sub } }, res, next) => {
   try {
     const mediaContents = await mediaContentService.userMediaContents(sub);
