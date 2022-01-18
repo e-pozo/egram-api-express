@@ -39,6 +39,7 @@ class User extends Model {
       foreignKey: 'userId',
       otherKey: 'friendId',
     });
+
     this.belongsToMany(models.Role, {
       as: 'roles',
       through: models.Permission,

@@ -15,9 +15,13 @@ export function CRUDServiceClosure(Model) {
       if (!object) throw boom.notFound(`${Model.name.toLowerCase()} not found`);
       return object;
     }
-    async update(id, changes) {
+    async update(id, changes, options) {
       let object = await this.findOne(id);
-      object = object.update(changes);
+      if (options) {
+        object = object.update(changes, options);
+      } else {
+        object = object.update(changes);
+      }
       return object;
     }
     async delete(id) {

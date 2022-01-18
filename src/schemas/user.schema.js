@@ -1,4 +1,4 @@
-import Joi from 'joi';
+import Joi, { required } from 'joi';
 
 const email = Joi.string().email();
 const password = Joi.string().min(6).max(20);
@@ -21,4 +21,11 @@ export const dataFilterToU = {
     nickName: userName,
   }),
   property: 'body',
+};
+
+export const dataFilterLogin = {
+  schema: Joi.object({
+    email: email.required(),
+    password: Joi.string().max(20).required(),
+  }),
 };
