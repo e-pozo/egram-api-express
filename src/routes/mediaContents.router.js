@@ -9,9 +9,9 @@ router.post(
   '/',
   validatorHandler(dataFilterToCU),
   upload.single('content'),
-  async ({ file, body }, res, next) => {
+  async ({ file, body, user: { sub } }, res, next) => {
     try {
-      const mediaContent = await mediaContentService.create(body, file);
+      const mediaContent = await mediaContentService.create(sub, body, file);
       res.json(mediaContent);
     } catch (err) {
       next(err);

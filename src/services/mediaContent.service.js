@@ -8,12 +8,17 @@ import { DEFAULT_PAG_LIMIT, DEFAULT_PAG_OFFSET } from './utils/constants';
 const unlinkFile = util.promisify(fs.unlink);
 const MediaContent = sequelize.models.MediaContent;
 class MediaContentService {
-  async create(data, file) {
+  async create(userId, data, file) {
     try {
-      const mediaContent = await MediaContent.create({
+      const user = await userService.findOne(userId);
+      const mediaContent = await user.createContentCreation({
         ...data,
         mediaKey: file.filename,
       });
+      // const mediaContent = await MediaContent.create({
+      //   ...data,
+      //   mediaKey: file.filename,
+      // });
       await uploadFileS3(file);
       return mediaContent;
     } catch (err) {
