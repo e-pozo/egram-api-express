@@ -1,6 +1,6 @@
 import sequelize from '../libs/sequelize';
 import boom from '@hapi/boom';
-import { uploadFileS3 } from '../libs/s3';
+import { uploadFileS3, deleteFileS3 } from '../libs/s3';
 import util from 'util';
 import fs from 'fs';
 import { userService } from './user.service';
@@ -58,6 +58,13 @@ class MediaContentService extends CRUDService {
     if (!mediaContent) throw boom.notFound('media content not found');
     return mediaContent;
   }
+
+  async delete(id) {
+    const mediaContent = await this.findOne(id);
+    await deleteFileS3(mediaContent.mediaKey);
+    await mediaContent.destroy();
+    return { id };
+  }
 }
 
 export const mediaContentService = new MediaContentService();
@@ -83,7 +90,7 @@ export async function checkMediaContentAuthorization(
     }
     const [user, mediaContent] = responses;
     if (await user.hasContentCreation(mediaContent)) return next();
-    if (mediaContent.statusAccess == 'FRIENDS') {
+    if (mediaContent.accessStatus == 'FRIENDS') {
       const creator = await mediaContent.getCreator();
       if (
         await creator.hasFriend(user, {
@@ -92,7 +99,7 @@ export async function checkMediaContentAuthorization(
       )
         return next();
     }
-    if (mediaContent.statusAccess == 'PUBLIC') return next();
+    if (mediaContent.accessStatus == 'PUBLIC') return next();
     next(boom.forbidden('resource forbbiden'));
   } catch (err) {
     next(err);
