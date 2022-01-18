@@ -4,7 +4,7 @@ import {
   checkMediaContentAuthorization,
 } from '../services/mediaContent.service';
 import { upload } from '../libs/multer';
-import { getFileStream } from '../libs/s3';
+import { getFileStreamS3 } from '../libs/s3';
 import { validatorHandler } from '../middlewares/validator.handler';
 import { dataFilterToCU } from '../schemas/mediaContent.schema';
 const router = Router();
@@ -45,10 +45,10 @@ router.get(
   }
 );
 
-router.get('/resource/:key', (req, res) => {
+router.get('/resource/:key', checkMediaContentAuthorization, (req, res) => {
   console.log(req.params);
   const key = req.params.key;
-  const readStream = getFileStream(key);
+  const readStream = getFileStreamS3(key);
   readStream.pipe(res);
 });
 // router.get('/', (req, res))

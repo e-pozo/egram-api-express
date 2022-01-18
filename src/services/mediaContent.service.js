@@ -64,14 +64,23 @@ export const mediaContentService = new MediaContentService();
 
 //AUTHORIZATION MIDDLEWARE
 export async function checkMediaContentAuthorization(
-  { params: { id }, user: { sub } },
+  { params: { id, key }, user: { sub } },
   _res,
   next
 ) {
-  const [user, mediaContent] = await Promise.all([
-    userService.findOne(sub),
-    mediaContentService.findOne(id),
-  ]);
+  let responses;
+  if (!id) {
+    responses = await Promise.all([
+      userService.findOne(sub),
+      mediaContentService.findByKey(key),
+    ]);
+  } else {
+    responses = await Promise.all([
+      userService.findOne(sub),
+      mediaContentService.findOne(id),
+    ]);
+  }
+  const [user, mediaContent] = responses;
   if (await user.hasContentCreation(mediaContent)) return next();
   if (mediaContent.statusAccess == 'FRIENDS') {
     const creator = await mediaContent.getCreator();
