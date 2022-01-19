@@ -7,6 +7,7 @@ import {
   MediaContentSubscription,
   mediaContentSubscriptionSchema,
 } from './mediaContentSubscription.model';
+import { Like, likeSchema } from './like.model';
 export function setupModels(sequelize) {
   MediaContent.init(mediaContentSchema, MediaContent.config(sequelize));
   User.init(userSchema, User.config(sequelize));
@@ -17,11 +18,11 @@ export function setupModels(sequelize) {
     mediaContentSubscriptionSchema,
     MediaContentSubscription.config(sequelize)
   );
+  Like.init(likeSchema, Like.config(sequelize));
 
   User.associate(sequelize.models);
   Role.associate(sequelize.models);
   MediaContent.associate(sequelize.models);
-  MediaContentSubscription.associate(sequelize.models);
 
   User.hookConf();
 }

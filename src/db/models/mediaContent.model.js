@@ -18,12 +18,16 @@ const mediaContentSchema = {
   },
   likes: {
     type: DataTypes.INTEGER.UNSIGNED,
+    defaultValue: 0,
   },
   visits: {
     type: DataTypes.INTEGER.UNSIGNED,
+    defaultValue: 0,
   },
   sharedCounter: {
     type: DataTypes.INTEGER.UNSIGNED,
+    defaultValue: 0,
+    field: 'shared_counter',
   },
   createdAt: commonFields.createdAt,
   updatedAt: commonFields.updatedAt,
@@ -47,6 +51,12 @@ class MediaContent extends Model {
     this.belongsToMany(models.User, {
       as: 'subscriptors',
       through: models.MediaContentSubscription,
+      foreignKey: 'mediaContentId',
+      otherKey: 'userId',
+    });
+    this.belongsToMany(models.User, {
+      as: 'peopleWhoLiked',
+      through: models.Like,
       foreignKey: 'mediaContentId',
       otherKey: 'userId',
     });

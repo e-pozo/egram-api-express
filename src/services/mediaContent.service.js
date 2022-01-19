@@ -4,6 +4,7 @@ import { uploadFileS3, deleteFileS3 } from '../libs/s3';
 import util from 'util';
 import fs from 'fs';
 import { userService } from './user.service';
+import { likeService } from './like.service';
 import { DEFAULT_PAG_LIMIT, DEFAULT_PAG_OFFSET } from './utils/constants';
 import { CRUDServiceClosure } from './utils/CRUDServiceClosure';
 const unlinkFile = util.promisify(fs.unlink);
@@ -86,6 +87,62 @@ class MediaContentService extends CRUDService {
       through: { active: false },
     });
     return subscription;
+  }
+
+  async like(userId, mediaContentId) {
+    const [user, mediaContent] = await Promise.all([
+      userService.findOne(userId),
+      this.findOne(mediaContentId),
+    ]);
+    const likeState = await likeService.findByForeignKeys(
+      userId,
+      mediaContentId
+    );
+    if (likeState.active) throw boom.conflict('mediaContent already liked');
+    const t = await sequelize.transaction();
+    try {
+      const like = await user.addLikedContent(mediaContent, {
+        through: { active: true },
+        transaction: t,
+      });
+      await mediaContent.update(
+        { likes: mediaContent.likes + 1 },
+        { transaction: t }
+      );
+      await t.commit();
+      return like;
+    } catch (err) {
+      await t.rollback();
+      throw err;
+    }
+  }
+
+  async unlike(userId, mediaContentId) {
+    const [user, mediaContent] = await Promise.all([
+      userService.findOne(userId),
+      this.findOne(mediaContentId),
+    ]);
+    const likeState = await likeService.findByForeignKeys(
+      userId,
+      mediaContentId
+    );
+    if (!likeState.active) throw boom.conflict('mediaContent already unliked');
+    const t = await sequelize.transaction();
+    try {
+      const like = await user.addLikedContent(mediaContent, {
+        through: { active: false },
+        transaction: t,
+      });
+      await mediaContent.update(
+        { likes: mediaContent.likes - 1 },
+        { transaction: t }
+      );
+      await t.commit();
+      return like;
+    } catch (err) {
+      await t.rollback();
+      throw err;
+    }
   }
 }
 

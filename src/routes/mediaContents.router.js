@@ -77,6 +77,30 @@ router.post(
   }
 );
 
+router.post(
+  '/:id/like',
+  async ({ user: { sub }, params: { id } }, res, next) => {
+    try {
+      const like = await mediaContentService.like(sub, id);
+      res.json(like);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+router.post(
+  '/:id/unlike',
+  async ({ user: { sub }, params: { id } }, res, next) => {
+    try {
+      const like = await mediaContentService.unlike(sub, id);
+      res.json(like);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
 router.patch(
   '/:id',
   checkOnlyCreator,
