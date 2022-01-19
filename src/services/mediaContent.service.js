@@ -65,6 +65,28 @@ class MediaContentService extends CRUDService {
     await mediaContent.destroy();
     return { id };
   }
+
+  async subscribe(userId, mediaContentId) {
+    const [user, mediaContent] = await Promise.all([
+      userService.findOne(userId),
+      this.findOne(mediaContentId),
+    ]);
+    const subscription = await user.addSubscription(mediaContent, {
+      through: { active: true },
+    });
+    return subscription;
+  }
+
+  async unsubscribe(userId, mediaContentId) {
+    const [user, mediaContent] = await Promise.all([
+      userService.findOne(userId),
+      this.findOne(mediaContentId),
+    ]);
+    const subscription = await user.addSubscription(mediaContent, {
+      through: { active: false },
+    });
+    return subscription;
+  }
 }
 
 export const mediaContentService = new MediaContentService();

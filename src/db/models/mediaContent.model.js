@@ -36,12 +36,20 @@ const mediaContentSchema = {
     type: DataTypes.DATE,
     field: 'disclosure_date',
   },
-  creatorId: commonFields.foreign('creator_id', USER_TABLE, 'id'),
+  creatorId: commonFields
+    .foreign('creator_id', USER_TABLE, 'id')
+    .add({ onDelete: 'CASCADE' }),
 };
 
 class MediaContent extends Model {
   static associate(models) {
     this.belongsTo(models.User, { as: 'creator' });
+    this.belongsToMany(models.User, {
+      as: 'subscriptors',
+      through: models.MediaContentSubscription,
+      foreignKey: 'mediaContentId',
+      otherKey: 'userId',
+    });
   }
 
   static config(sequelize) {

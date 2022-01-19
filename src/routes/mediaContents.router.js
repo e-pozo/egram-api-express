@@ -53,6 +53,30 @@ router.post(
   }
 );
 
+router.post(
+  '/:id/subscribe',
+  async ({ user: { sub }, params: { id } }, res, next) => {
+    try {
+      const subscription = await mediaContentService.subscribe(sub, id);
+      res.json(subscription);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+router.post(
+  '/:id/unsubscribe',
+  async ({ user: { sub }, params: { id } }, res, next) => {
+    try {
+      const subscription = await mediaContentService.unsubscribe(sub, id);
+      res.json(subscription);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
 router.patch(
   '/:id',
   checkOnlyCreator,

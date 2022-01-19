@@ -50,6 +50,12 @@ class User extends Model {
       as: 'contentCreations',
       foreignKey: 'creatorId',
     });
+    this.belongsToMany(models.MediaContent, {
+      as: 'subscriptions',
+      through: models.MediaContentSubscription,
+      foreignKey: 'userId',
+      otherKey: 'mediaContentId',
+    });
   }
   static hookConf() {
     this.beforeCreate('hashPassword', async (user, _options) => {
