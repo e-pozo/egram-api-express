@@ -1,27 +1,16 @@
 'use strict';
 import { TAG_TABLE } from '../models/tag.model';
-import { USER_TABLE } from '../models/user.model';
+import { MEDIA_CONTENT_TABLE } from '../models/mediaContent.model';
+import { TAG_MEDIA_CONTENT_TABLE } from '../models/tagMediaContent.model';
 import commonFields from '../models/utils/commonFields';
-
-const tagsSchema = (DataTypes) => ({
+const tagMediaContentSchema = (_DataTypes) => ({
   id: commonFields.id,
-  userId: commonFields
-    .foreign('user_id', USER_TABLE, 'id')
+  tagId: commonFields
+    .foreign('tag_id', TAG_TABLE, 'id')
     .add({ onDelete: 'CASCADE' }),
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  visits: {
-    type: DataTypes.INTEGER,
-    defaultValue: 0,
-    allowNull: false,
-  },
-  subscriptions: {
-    type: DataTypes.INTEGER,
-    defaultValue: 0,
-    allowNull: false,
-  },
+  mediaContentId: commonFields
+    .foreign('media_content_id', MEDIA_CONTENT_TABLE, 'id')
+    .add({ onDelete: 'CASCADE' }),
   createdAt: commonFields.createdAt,
   updatedAt: commonFields.updatedAt,
 });
@@ -34,8 +23,8 @@ module.exports = {
      * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
      */
     await queryInterface.createTable(
-      TAG_TABLE,
-      tagsSchema(Sequelize.DataTypes)
+      TAG_MEDIA_CONTENT_TABLE,
+      tagMediaContentSchema(Sequelize.DataTypes)
     );
   },
 
@@ -46,6 +35,6 @@ module.exports = {
      * Example:
      * await queryInterface.dropTable('users');
      */
-    await queryInterface.dropTable(TAG_TABLE);
+    await queryInterface.dropTable(TAG_MEDIA_CONTENT_TABLE);
   },
 };

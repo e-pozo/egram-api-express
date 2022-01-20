@@ -31,6 +31,12 @@ export class Tag extends Model {
     this.belongsTo(models.User, {
       as: 'creator',
     });
+    this.belongsToMany(models.MediaContent, {
+      as: 'mediaContents',
+      through: models.TagMediaContent,
+      foreignKey: 'tagId',
+      otherKey: 'mediaContentId',
+    });
   }
 
   static config(sequelize) {

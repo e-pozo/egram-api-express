@@ -60,6 +60,12 @@ class MediaContent extends Model {
       foreignKey: 'mediaContentId',
       otherKey: 'userId',
     });
+    this.belongsToMany(models.Tag, {
+      as: 'tags',
+      through: models.TagMediaContent,
+      foreignKey: 'mediaContentId',
+      otherKey: 'tagId',
+    });
   }
 
   static config(sequelize) {
