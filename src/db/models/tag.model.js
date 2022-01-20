@@ -1,8 +1,6 @@
 import { DataTypes, Model } from 'sequelize';
-import { compare } from '../../auth/hash';
 import commonFields from './utils/commonFields';
 import { USER_TABLE } from './user.model';
-import { MEDIA_CONTENT_TABLE } from './mediaContent.model';
 export const TAG_TABLE = 'tags';
 
 export const tagsSchema = {
@@ -10,9 +8,6 @@ export const tagsSchema = {
   userId: commonFields
     .foreign('user_id', USER_TABLE, 'id')
     .add({ onDelete: 'CASCADE' }),
-  mediaContentId: commonFields
-    .foreign('media_content_id', MEDIA_CONTENT_TABLE, 'id')
-    .add({ onDelete: 'SET NULL' }),
   name: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -36,7 +31,6 @@ export class Tag extends Model {
     this.belongsTo(models.User, {
       as: 'creator',
     });
-    this.belongsTo(models.MediaContent);
   }
 
   static config(sequelize) {

@@ -60,10 +60,6 @@ class MediaContent extends Model {
       foreignKey: 'mediaContentId',
       otherKey: 'userId',
     });
-    this.hasMany(models.Tag, {
-      as: 'tags',
-      foreignKey: 'mediaContentId',
-    });
   }
 
   static config(sequelize) {
