@@ -30,6 +30,7 @@ export class Tag extends Model {
   static associate(models) {
     this.belongsTo(models.User, {
       as: 'creator',
+      foreignKey: 'userId',
     });
     this.belongsToMany(models.MediaContent, {
       as: 'mediaContents',

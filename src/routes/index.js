@@ -1,8 +1,9 @@
 import { Router } from 'express';
+import auth from './auth';
 import users from './users.router';
 import mediaContents from './mediaContents.router';
 import friends from './friends.router';
-import auth from './auth';
+import tags from './tags.router';
 import passport from '../auth';
 export function useRoutes(app) {
   const router = Router();
@@ -19,4 +20,5 @@ export function useRoutes(app) {
     passport.authenticate('jwt', { session: false }),
     friends
   );
+  router.use('/tags', passport.authenticate('jwt', { session: false }), tags);
 }
