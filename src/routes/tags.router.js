@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import { tagService } from '../services/tag.service';
+import { json } from 'express/lib/response';
+import { onlyCreator, tagService } from '../services/tag.service';
 const router = Router();
 
 router.post('/', async ({ user: { sub }, body }, res, next) => {
@@ -20,5 +21,18 @@ router.get('/', async ({ user: { sub }, res, next }) => {
     next(err);
   }
 });
+
+router.patch(
+  '/:id',
+  onlyCreator,
+  async ({ body, params: { id } }, res, next) => {
+    try {
+      const tag = await tagService.update(id, body);
+      res.json(tag);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 
 export default router;
