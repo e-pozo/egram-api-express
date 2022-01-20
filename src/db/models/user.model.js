@@ -62,6 +62,10 @@ class User extends Model {
       foreignKey: 'userId',
       otherKey: 'mediaContentId',
     });
+    this.hasMany(models.Tag, {
+      as: 'tags',
+      foreignKey: 'userId',
+    });
   }
   static hookConf() {
     this.beforeCreate('hashPassword', async (user, _options) => {
