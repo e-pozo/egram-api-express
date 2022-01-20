@@ -9,6 +9,7 @@ import { DEFAULT_PAG_LIMIT, DEFAULT_PAG_OFFSET } from './utils/constants';
 import { CRUDServiceClosure } from './utils/CRUDServiceClosure';
 const unlinkFile = util.promisify(fs.unlink);
 const MediaContent = sequelize.models.MediaContent;
+const Like = sequelize.models.Like;
 const CRUDService = CRUDServiceClosure(MediaContent);
 class MediaContentService extends CRUDService {
   async create(userId, data, file) {
@@ -94,11 +95,8 @@ class MediaContentService extends CRUDService {
       userService.findOne(userId),
       this.findOne(mediaContentId),
     ]);
-    const likeState = await likeService.findByForeignKeys(
-      userId,
-      mediaContentId
-    );
-    if (likeState.active) throw boom.conflict('mediaContent already liked');
+    const likeState = await Like.findOne({ where: { userId, mediaContentId } });
+    if (likeState?.active) throw boom.conflict('mediaContent already liked');
     const t = await sequelize.transaction();
     try {
       const like = await user.addLikedContent(mediaContent, {
