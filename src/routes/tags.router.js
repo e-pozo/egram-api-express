@@ -35,4 +35,13 @@ router.patch(
   }
 );
 
+router.delete('/:id', onlyCreator, async ({ params: { id } }, res, next) => {
+  try {
+    const response = await tagService.delete(id);
+    res.json(response);
+  } catch (err) {
+    next(err);
+  }
+});
+
 export default router;
