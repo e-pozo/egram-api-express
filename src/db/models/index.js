@@ -13,6 +13,10 @@ import {
   TagMediaContent,
   tagMediaContentSchema,
 } from './tagMediaContent.model';
+import {
+  TagSubscription,
+  tagSubscriptionSchema,
+} from './tagSubscription.model';
 export function setupModels(sequelize) {
   MediaContent.init(mediaContentSchema, MediaContent.config(sequelize));
   User.init(userSchema, User.config(sequelize));
@@ -28,6 +32,10 @@ export function setupModels(sequelize) {
   TagMediaContent.init(
     tagMediaContentSchema,
     TagMediaContent.config(sequelize)
+  );
+  TagSubscription.init(
+    tagSubscriptionSchema,
+    TagSubscription.config(sequelize)
   );
 
   User.associate(sequelize.models);

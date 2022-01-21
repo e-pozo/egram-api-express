@@ -1,25 +1,19 @@
 'use strict';
-import { TAG_TABLE } from '../models/tag.model';
+import { TAG_SUBSCRIPTION_TABLE } from '../models/tagSubscription.model';
 import { USER_TABLE } from '../models/user.model';
+import { TAG_TABLE } from '../models/tag.model';
 import commonFields from '../models/utils/commonFields';
-
-const tagsSchema = (DataTypes) => ({
+const tagSubscriptionSchema = (DataTypes) => ({
   id: commonFields.id,
   userId: commonFields
     .foreign('user_id', USER_TABLE, 'id')
     .add({ onDelete: 'CASCADE' }),
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  visits: {
-    type: DataTypes.INTEGER,
-    defaultValue: 0,
-    allowNull: false,
-  },
-  subscriptions: {
-    type: DataTypes.INTEGER,
-    defaultValue: 0,
+  tagId: commonFields
+    .foreign('tag_id', TAG_TABLE, 'id')
+    .add({ onDelete: 'CASCADE' }),
+  active: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: true,
     allowNull: false,
   },
   createdAt: commonFields.createdAt,
@@ -28,12 +22,12 @@ const tagsSchema = (DataTypes) => ({
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable(
-      TAG_TABLE,
-      tagsSchema(Sequelize.DataTypes)
+      TAG_SUBSCRIPTION_TABLE,
+      tagSubscriptionSchema(Sequelize.DataTypes)
     );
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable(TAG_TABLE);
+    await queryInterface.dropTable(TAG_SUBSCRIPTION_TABLE);
   },
 };

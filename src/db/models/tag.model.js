@@ -38,6 +38,12 @@ export class Tag extends Model {
       foreignKey: 'tagId',
       otherKey: 'mediaContentId',
     });
+    this.belongsToMany(models.User, {
+      as: 'subscribers',
+      through: models.TagSubscription,
+      foreignKey: 'tagId',
+      otherKey: 'userId',
+    });
   }
 
   static config(sequelize) {

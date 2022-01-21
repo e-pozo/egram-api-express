@@ -66,6 +66,12 @@ class User extends Model {
       as: 'tags',
       foreignKey: 'userId',
     });
+    this.belongsToMany(models.Tag, {
+      as: 'subscribedTags',
+      through: models.TagSubscription,
+      foreignKey: 'userId',
+      otherKey: 'tagId',
+    });
   }
   static hookConf() {
     this.beforeCreate('hashPassword', async (user, _options) => {
