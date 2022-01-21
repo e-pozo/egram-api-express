@@ -49,6 +49,28 @@ router.post(
     }
   }
 );
+router.post(
+  '/:tagId/subscribe',
+  async ({ user: { sub }, params: { tagId } }, res, next) => {
+    try {
+      const subscription = await tagService.subscribe(sub, tagId);
+      res.json(subscription);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+router.post(
+  '/:tagId/unsubscribe',
+  async ({ user: { sub }, params: { tagId } }, res, next) => {
+    try {
+      const subscription = await tagService.unsubscribe(sub, tagId);
+      res.json(subscription);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 
 router.get('/', async ({ user: { sub }, res, next }) => {
   try {

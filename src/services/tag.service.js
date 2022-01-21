@@ -1,10 +1,11 @@
 import sequelize from '../libs/sequelize';
-import { Op } from 'sequelize';
+import { Op, where } from 'sequelize';
 import { CRUDServiceClosure } from './utils/CRUDServiceClosure';
 import { userService } from './user.service';
 import { mediaContentService } from './mediaContent.service';
 import boom from '@hapi/boom';
 const Tag = sequelize.models.Tag;
+const TagSubscription = sequelize.models.TagSubscription;
 const CRUDService = CRUDServiceClosure(Tag);
 class TagService extends CRUDService {
   async userTags(userId) {
@@ -47,6 +48,59 @@ class TagService extends CRUDService {
     ]);
     const tagRelation = await tag.removeMediaContent(mediaContent);
     return tagRelation;
+  }
+
+  async subscribe(userId, tagId) {
+    const [user, tag] = await Promise.all([
+      userService.findOne(userId),
+      this.findOne(tagId),
+    ]);
+    const tagSubscriptionState = await TagSubscription.findOne({
+      where: { userId, tagId },
+    });
+    if (tagSubscriptionState?.active) throw boom.conflict('Already Subscribed');
+    const t = await sequelize.transaction();
+    try {
+      const subscription = await user.addSubscribedTag(tag, { transaction: t });
+      await tag.update(
+        { subscriptions: tag.subscriptions + 1 },
+        { transaction: t }
+      );
+      await t.commit();
+      return subscription;
+    } catch (err) {
+      await t.rollback();
+      throw err;
+    }
+  }
+
+  async unsubscribe(userId, tagId) {
+    const [user, tag] = await Promise.all([
+      userService.findOne(userId),
+      this.findOne(tagId),
+    ]);
+    const tagSubscriptionState = await TagSubscription.findOne({
+      where: { userId, tagId },
+    });
+    if (!tagSubscriptionState) throw boom.notFound('subscription not found');
+    if (!tagSubscriptionState.active)
+      throw boom.conflict('already unsubscribed');
+    const t = await sequelize.transaction();
+    try {
+      const subscription = await user.addSubscribedTag(tag, {
+        through: { active: false },
+        transaction: t,
+      });
+      await tag.update(
+        { subscriptions: tag.subscriptions - 1 },
+        { transaction: t }
+      );
+      await t.commit();
+      return subscription;
+    } catch (err) {
+      await t.rollback();
+      throw err;
+    }
   }
 }
 
