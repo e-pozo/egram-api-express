@@ -183,19 +183,18 @@ export async function checkMediaContentAuthorization(
   }
 }
 
-export async function checkOnlyCreator(
-  { params: { id }, user: { sub } },
-  _res,
-  next
-) {
-  try {
-    const [user, mediaContent] = await Promise.all([
-      userService.findOne(sub),
-      mediaContentService.findOne(id),
-    ]);
-    if (await user.hasContentCreation(mediaContent)) return next();
-    next(boom.forbidden('resource forbbiden'));
-  } catch (err) {
-    next(err);
-  }
+export function checkOnlyCreatorClosure(idExtractor) {
+  return async (req, _res, next) => {
+    const [userId, mediaContentId] = idExtractor(req);
+    try {
+      const [user, mediaContent] = await Promise.all([
+        userService.findOne(userId),
+        mediaContentService.findOne(mediaContentId),
+      ]);
+      if (await user.hasContentCreation(mediaContent)) return next();
+      next(boom.forbidden('resource forbbiden'));
+    } catch (err) {
+      next(err);
+    }
+  };
 }

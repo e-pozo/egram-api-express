@@ -36,10 +36,3 @@ export async function refresh({ user: { sub } }, res, next) {
     next(boom.unauthorized('unauthorized'));
   }
 }
-
-// export async function checkMediaResourceAccess({ user: {sub}, params:{key}}, res, next){
-//   try {
-//     const user = await userService.findOne(sub);
-
-//   }
-// }
