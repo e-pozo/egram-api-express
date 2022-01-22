@@ -4,6 +4,7 @@ import users from './users.router';
 import mediaContents from './mediaContents.router';
 import friends from './friends.router';
 import tags from './tags.router';
+import comments from './comments.router';
 import passport from '../auth';
 export function useRoutes(app) {
   const router = Router();
@@ -21,4 +22,9 @@ export function useRoutes(app) {
     friends
   );
   router.use('/tags', passport.authenticate('jwt', { session: false }), tags);
+  router.use(
+    '/comments',
+    passport.authenticate('jwt', { session: false }),
+    comments
+  );
 }

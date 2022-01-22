@@ -66,7 +66,10 @@ class MediaContent extends Model {
       foreignKey: 'mediaContentId',
       otherKey: 'tagId',
     });
-    this.hasMany(models.Comment, { as: 'comments' });
+    this.hasMany(models.Comment, {
+      as: 'comments',
+      foreignKey: 'mediaContentId',
+    });
   }
 
   static config(sequelize) {

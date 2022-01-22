@@ -32,7 +32,10 @@ export class Comment extends Model {
       otherKey: 'userId',
     });
     this.belongsTo(models.User, { as: 'creator', foreignKey: 'userId' });
-    this.belongsTo(models.MediaContent, { as: 'subject' });
+    this.belongsTo(models.MediaContent, {
+      as: 'subject',
+      foreignKey: 'mediaContentId',
+    });
   }
   static config(sequelize) {
     return {
