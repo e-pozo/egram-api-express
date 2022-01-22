@@ -1,5 +1,5 @@
 import sequelize from '../libs/sequelize';
-import { Op, where } from 'sequelize';
+import { Op } from 'sequelize';
 import { CRUDServiceClosure } from './utils/CRUDServiceClosure';
 import { userService } from './user.service';
 import { mediaContentService } from './mediaContent.service';
@@ -31,7 +31,13 @@ class TagService extends CRUDService {
     tag.dataValues.mediaContents = mediaContents;
     return tag;
   }
-
+  async getSubscribedTags(userId) {
+    const user = await userService.findOne(userId);
+    const tags = await user.getSubscribedTags({
+      through: { where: { active: true } },
+    });
+    return tags;
+  }
   async addContent(tagId, contentId) {
     const [tag, mediaContent] = await Promise.all([
       this.findOne(tagId),
@@ -61,7 +67,10 @@ class TagService extends CRUDService {
     if (tagSubscriptionState?.active) throw boom.conflict('Already Subscribed');
     const t = await sequelize.transaction();
     try {
-      const subscription = await user.addSubscribedTag(tag, { transaction: t });
+      const subscription = await user.addSubscribedTag(tag, {
+        through: { active: true },
+        transaction: t,
+      });
       await tag.update(
         { subscriptions: tag.subscriptions + 1 },
         { transaction: t }

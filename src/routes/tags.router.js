@@ -81,6 +81,15 @@ router.get('/', async ({ user: { sub }, res, next }) => {
   }
 });
 
+router.get('/subscribed', async ({ user: { sub } }, res, next) => {
+  try {
+    const tags = await tagService.getSubscribedTags(sub);
+    res.json(tags);
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.get('/:id', async ({ user: { sub }, params: { id } }, res, next) => {
   try {
     const mediaContents = await tagService.detail(id, sub);
