@@ -17,6 +17,8 @@ import {
   TagSubscription,
   tagSubscriptionSchema,
 } from './tagSubscription.model';
+import { Comment, commentSchema } from './comment.model';
+import { CommentLike, commentLikeSchema } from './commentLike.model';
 export function setupModels(sequelize) {
   MediaContent.init(mediaContentSchema, MediaContent.config(sequelize));
   User.init(userSchema, User.config(sequelize));
@@ -37,11 +39,14 @@ export function setupModels(sequelize) {
     tagSubscriptionSchema,
     TagSubscription.config(sequelize)
   );
+  Comment.init(commentSchema, Comment.config(sequelize));
+  CommentLike.init(commentLikeSchema, CommentLike.config(sequelize));
 
   User.associate(sequelize.models);
   Role.associate(sequelize.models);
   Tag.associate(sequelize.models);
   MediaContent.associate(sequelize.models);
+  Comment.associate(sequelize.models);
 
   User.hookConf();
 }

@@ -72,6 +72,13 @@ class User extends Model {
       foreignKey: 'userId',
       otherKey: 'tagId',
     });
+    this.hasMany(models.Comment, { as: 'comments' });
+    this.belongsToMany(models.Comment, {
+      as: 'likedComments',
+      through: models.CommentLike,
+      foreignKey: 'userId',
+      otherKey: 'commentId',
+    });
   }
   static hookConf() {
     this.beforeCreate('hashPassword', async (user, _options) => {
